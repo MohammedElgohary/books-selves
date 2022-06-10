@@ -1,5 +1,6 @@
 import React from "react";
 import ProtoTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 const Shelves = [
   {
@@ -20,13 +21,12 @@ const Shelves = [
   },
 ];
 
-export const Book = ({ book, changeBookShelf, noDefaultValue, t }) => {
-  noDefaultValue = noDefaultValue || false;
-
+export const Book = ({ book, changeBookShelf, t }) => {
   return (
     <div className="book">
       <div className="book-top">
-        <div
+        <Link
+          to={{ pathname: `/book/${book.id}`, state: book }}
           className="book-cover"
           style={{
             width: 128,
@@ -40,13 +40,13 @@ export const Book = ({ book, changeBookShelf, noDefaultValue, t }) => {
         />
         <div className="book-shelf-changer">
           <select
-            defaultValue={noDefaultValue ? "" : book.shelf}
+            defaultValue={book.shelf}
             onChange={(e) => {
               changeBookShelf(book, e.target.value);
               console.log(e.target.value);
             }}
           >
-            <option value="move" disabled={!noDefaultValue}>
+            <option value="move" disabled>
               {t("Move to...")}
             </option>
             {Shelves.map((shelf) => (
@@ -65,7 +65,7 @@ export const Book = ({ book, changeBookShelf, noDefaultValue, t }) => {
             <span key={book.title + author + index}>{author}</span>
           ))
         ) : (
-          <span>{"No author"}</span>
+          <span>{t("No author")}</span>
         )}
       </div>
     </div>
@@ -75,6 +75,5 @@ export const Book = ({ book, changeBookShelf, noDefaultValue, t }) => {
 Book.propTypes = {
   book: ProtoTypes.object.isRequired,
   changeBookShelf: ProtoTypes.func.isRequired,
-  noDefaultValue: ProtoTypes.bool,
   t: ProtoTypes.func.isRequired,
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import * as BooksAPI from "./BooksAPI";
 import "./App.css";
-import { Search, Home } from "./pages";
+import { Search, Home, BookDetails } from "./pages";
 import { Route, Switch, withRouter } from "react-router-dom";
 
 import { translation } from "./lang";
@@ -146,6 +146,7 @@ class BooksApp extends React.Component {
       });
 
       searchResults.forEach((b) => {
+        b.shelf = "none";
         if (b.id === book.id) {
           b.shelf = shelf;
         }
@@ -155,7 +156,7 @@ class BooksApp extends React.Component {
     });
   };
 
-  // searching after 0.5 second from last typing
+  // searching after 1 second from last typing
   searchBooks = async (query) => {
     await this.setState({ query });
 
@@ -173,7 +174,7 @@ class BooksApp extends React.Component {
           this.setState({ searchResults: [], searching: false });
         }
       });
-    }, 500);
+    }, 1000);
   };
 
   initializeLang = (lang) => {
@@ -191,6 +192,7 @@ class BooksApp extends React.Component {
     let resultBooks = [];
 
     books.forEach((book) => {
+      book.shelf = "none";
       OurBooks.forEach((OurBook) => {
         if (OurBook.id === book.id) {
           book.shelf = OurBook.shelf;
@@ -244,6 +246,19 @@ class BooksApp extends React.Component {
                   searching,
                   t,
                   shelves,
+                }}
+              />
+            )}
+          />
+
+          <Route
+            path="/book/:id"
+            render={({ history, match }) => (
+              <BookDetails
+                {...{
+                  history,
+                  match,
+                  t,
                 }}
               />
             )}

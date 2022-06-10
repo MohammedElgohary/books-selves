@@ -16,6 +16,7 @@ export const translation = {
       "Move to...": "تحريك إلى...",
       "No author": "لا يوجد مؤلف",
       None: "لا شيء",
+      authors: "المؤلفون",
     },
   },
   en: {
@@ -35,6 +36,7 @@ export const translation = {
       "Move to...": "Move to...",
       "No author": "No author",
       None: "None",
+      authors: "Authors",
     },
   },
   fr: {
@@ -54,6 +56,7 @@ export const translation = {
       "Move to...": "Déplacer vers...",
       "No author": "Aucun auteur",
       None: "Aucun",
+      authors: "Auteurs",
     },
   },
   de: {
@@ -73,6 +76,7 @@ export const translation = {
       "Move to...": "Verschiebe zu...",
       "No author": "Kein Autor",
       None: "Keiner",
+      authors: "Autoren",
     },
   },
   es: {
@@ -92,6 +96,7 @@ export const translation = {
       "Move to...": "Mover a...",
       "No author": "Sin autor",
       None: "Ninguno",
+      authors: "Autores",
     },
   },
   it: {
@@ -111,6 +116,7 @@ export const translation = {
       "Move to...": "Sposta a...",
       "No author": "Nessun autore",
       None: "Nessuno",
+      authors: "Autori",
     },
   },
   ja: {
@@ -130,6 +136,7 @@ export const translation = {
       "Move to...": "移動先...",
       "No author": "著者なし",
       None: "なし",
+      authors: "著者",
     },
   },
   ko: {
@@ -149,6 +156,7 @@ export const translation = {
       "Move to...": "이동...",
       "No author": "저자 없음",
       None: "없음",
+      authors: "저자",
     },
   },
   pt: {
@@ -168,6 +176,7 @@ export const translation = {
       "Move to...": "Mover para...",
       "No author": "Sem autor",
       None: "Nenhum",
+      authors: "Autores",
     },
   },
   ru: {
@@ -187,6 +196,7 @@ export const translation = {
       "Move to...": "Переместить в...",
       "No author": "Без автора",
       None: "Нет",
+      authors: "Авторы",
     },
   },
 };

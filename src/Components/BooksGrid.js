@@ -8,12 +8,7 @@ export const BooksGrid = ({ books, changeBookShelf, t }) => {
       {books.length ? (
         books.map((book) => (
           <li key={book.title + book.id}>
-            <Book
-              book={book}
-              changeBookShelf={changeBookShelf}
-              noDefaultValue={true}
-              t={t}
-            />
+            <Book book={book} changeBookShelf={changeBookShelf} t={t} />
           </li>
         ))
       ) : (
