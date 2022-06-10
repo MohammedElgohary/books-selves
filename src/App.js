@@ -4,7 +4,9 @@ import "./App.css";
 import { Search, Home } from "./pages";
 import { Route, Switch, withRouter } from "react-router-dom";
 
-// shelfs types
+import { translation } from "./lang";
+
+// shelves types
 const Shelf = Object.freeze({
   currentlyReading: "currentlyReading",
   wantToRead: "wantToRead",
@@ -16,7 +18,7 @@ class BooksApp extends React.Component {
   state = {
     books: [],
     searchResults: [],
-    shelfs: [
+    shelves: [
       {
         id: Shelf.currentlyReading,
         title: "Currently Reading",
@@ -35,6 +37,9 @@ class BooksApp extends React.Component {
     ],
     query: "",
     searching: false,
+    translation: translation.en.translation,
+    lang: "en",
+    dir: translation.en.dir,
   };
 
   // properties
@@ -43,11 +48,19 @@ class BooksApp extends React.Component {
   // methods
   componentDidMount() {
     this.getData();
+
+    if (window) {
+      let lang = window.localStorage.getItem("lang");
+      if (lang) {
+        this.initializeLang(lang);
+      }
+    }
+    // set language
   }
 
-  // recreate shelfs
-  recreateShelfs = (books) => {
-    const shelfs = [
+  // recreate shelves
+  reCreateShelves = (books) => {
+    const shelves = [
       {
         id: Shelf.currentlyReading,
         title: "Currently Reading",
@@ -66,75 +79,83 @@ class BooksApp extends React.Component {
     ];
     books.forEach((book) => {
       if (book.shelf === "currentlyReading") {
-        shelfs[0].books.push(book);
+        shelves[0].books.push(book);
       } else if (book.shelf === "wantToRead") {
-        shelfs[1].books.push(book);
+        shelves[1].books.push(book);
       } else if (book.shelf === "read") {
-        shelfs[2].books.push(book);
+        shelves[2].books.push(book);
       }
     });
 
-    return shelfs;
+    return shelves;
   };
 
-  // gets books and re factors the shelfs
+  // gets books and re factors the shelves
   getData = () => {
     BooksAPI.getAll().then((books) => {
-      console.log(books);
       this.setState({
         books: books,
-        shelfs: this.recreateShelfs(books),
+        shelves: this.reCreateShelves(books),
       });
     });
   };
 
   // arrange books by shelf
   arrangeBooks = (books) => {
-    const { shelfs } = this.state;
+    const { shelves } = this.state;
 
     books.forEach((book) => {
-      shelfs.forEach((shelf) => {
+      shelves.forEach((shelf) => {
         if (book.shelf === shelf.id) {
           shelf.books.push(book);
         }
       });
     });
 
-    this.setState({ shelfs, books });
-    return shelfs;
+    this.setState({ shelves, books });
+    return shelves;
   };
 
   // assign a book to a shelf
-  changeBookShelf = (target) => (book, shelf) => {
-    const { books, shelfs } = this.state;
+  changeBookShelf = (book, shelf) => {
+    BooksAPI.update(book, shelf).then((res) => {
+      const { books, shelves, searchResults } = this.state;
 
-    books.forEach((b) => {
-      if (b.id === book.id) {
-        b.shelf = shelf;
-      }
-    });
-
-    shelfs.forEach((s) => {
-      s.books.forEach((b) => {
+      books.forEach((b) => {
         if (b.id === book.id) {
           b.shelf = shelf;
         }
       });
-    });
 
-    this.setState({ books, shelfs });
+      shelves.forEach((s) => {
+        // add book to shelf
+        if (s.id === book.shelf) {
+          s.books.push(book);
+        }
 
-    BooksAPI.update(book, shelf).then((res) => {
-      if (target === "search") {
-        this.searchBooks(this.state.query);
-        this.getData();
-      } else {
-        this.getData();
-      }
+        s.books.forEach((b) => {
+          // remove book from its old shelf
+          if (b.id === book.id && s.id !== b.shelf) {
+            s.books = s.books.filter((b) => b.id !== book.id);
+          }
+
+          if (b.id === book.id) {
+            b.shelf = shelf;
+          }
+        });
+      });
+
+      searchResults.forEach((b) => {
+        if (b.id === book.id) {
+          b.shelf = shelf;
+        }
+      });
+
+      this.setState({ books, shelves, searchResults });
     });
   };
 
-  // searching after 1 second from last typing
+  // searching after 0.5 second from last typing
   searchBooks = async (query) => {
     await this.setState({ query });
 
@@ -144,20 +165,52 @@ class BooksApp extends React.Component {
       await this.setState({ searching: true });
       BooksAPI.search(query).then((books) => {
         if (books && books.length) {
-          this.setState({ searchResults: books, searching: false });
+          this.setState({
+            searchResults: this.getBooksSelfs(books),
+            searching: false,
+          });
         } else {
           this.setState({ searchResults: [], searching: false });
         }
       });
-    }, 1000);
+    }, 500);
+  };
+
+  initializeLang = (lang) => {
+    this.setState({
+      translation: translation[lang].translation,
+      lang,
+      dir: translation[lang].dir,
+    });
+    window.localStorage.setItem("lang", lang);
+  };
+
+  getBooksSelfs = (books) => {
+    const OurBooks = this.state.books;
+
+    let resultBooks = [];
+
+    books.forEach((book) => {
+      OurBooks.forEach((OurBook) => {
+        if (OurBook.id === book.id) {
+          book.shelf = OurBook.shelf;
+        }
+      });
+      resultBooks.push(book);
+    });
+
+    return resultBooks;
   };
 
   render() {
-    let { shelfs, books, query, searching, searchResults } = this.state,
-      { changeBookShelf, searchBooks } = this;
+    let { shelves, books, query, searching, searchResults, dir, lang } =
+        this.state,
+      { changeBookShelf, searchBooks, initializeLang } = this;
 
+    const t = (key) =>
+      this.state.translation[key] ? this.state.translation[key] : key;
     return (
-      <div className="app">
+      <div className="app" dir={dir}>
         <Switch>
           <Route
             exact
@@ -166,9 +219,13 @@ class BooksApp extends React.Component {
               <Home
                 {...{
                   history,
-                  shelfs,
-                  changeBookShelf: changeBookShelf("getData"),
+                  shelves,
+                  changeBookShelf,
                   books,
+                  t,
+                  translation,
+                  initializeLang,
+                  lang,
                 }}
               />
             )}
@@ -181,10 +238,12 @@ class BooksApp extends React.Component {
                 {...{
                   history,
                   searchBooks,
-                  changeBookShelf: changeBookShelf("search"),
+                  changeBookShelf,
                   books: searchResults,
                   query,
                   searching,
+                  t,
+                  shelves,
                 }}
               />
             )}

@@ -1,7 +1,8 @@
 import React from "react";
+import propTypes from "prop-types";
 import { Book } from "../Components";
 
-export const BooksGrid = ({ books, changeBookShelf }) => {
+export const BooksGrid = ({ books, changeBookShelf, t }) => {
   return (
     <ol className="books-grid">
       {books.length ? (
@@ -11,12 +12,19 @@ export const BooksGrid = ({ books, changeBookShelf }) => {
               book={book}
               changeBookShelf={changeBookShelf}
               noDefaultValue={true}
+              t={t}
             />
           </li>
         ))
       ) : (
-        <div className="loading">No Search Results</div>
+        <div className="loading">{t("No Search Results")}</div>
       )}
     </ol>
   );
+};
+
+BooksGrid.propTypes = {
+  books: propTypes.array.isRequired,
+  changeBookShelf: propTypes.func.isRequired,
+  t: propTypes.func.isRequired,
 };

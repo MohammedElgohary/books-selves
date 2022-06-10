@@ -224,3 +224,14 @@ button:active {
   margin: 50vh auto;
   font-size: 2.5rem;
 }
+
+.app[dir="rtl"] .close-search {
+  transform: rotate(180deg);
+}
+
+.language-selector {
+  width: 150px;
+  padding: 8px;
+  margin: 10px;
+  text-align: center;
+}

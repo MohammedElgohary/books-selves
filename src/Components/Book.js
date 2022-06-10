@@ -1,6 +1,26 @@
 import React from "react";
+import ProtoTypes from "prop-types";
 
-export const Book = ({ book, changeBookShelf, noDefaultValue }) => {
+const Shelves = [
+  {
+    id: "currentlyReading",
+    title: "Currently Reading",
+  },
+  {
+    id: "wantToRead",
+    title: "Want to Read",
+  },
+  {
+    id: "read",
+    title: "Read",
+  },
+  {
+    id: "none",
+    title: "None",
+  },
+];
+
+export const Book = ({ book, changeBookShelf, noDefaultValue, t }) => {
   noDefaultValue = noDefaultValue || false;
 
   return (
@@ -26,13 +46,15 @@ export const Book = ({ book, changeBookShelf, noDefaultValue }) => {
               console.log(e.target.value);
             }}
           >
-            <option value="move" disabled>
-              Move to...
+            <option value="move" disabled={!noDefaultValue}>
+              {t("Move to...")}
             </option>
-            <option value="currentlyReading">Currently Reading</option>
-            <option value="wantToRead">Want to Read</option>
-            <option value="read">Read</option>
-            <option value="none">None</option>
+            {Shelves.map((shelf) => (
+              <option key={shelf.id} value={shelf.id}>
+                {book.shelf === shelf.id && "* "}
+                {t(shelf.title)}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -43,9 +65,16 @@ export const Book = ({ book, changeBookShelf, noDefaultValue }) => {
             <span key={book.title + author + index}>{author}</span>
           ))
         ) : (
-          <span>No author</span>
+          <span>{"No author"}</span>
         )}
       </div>
     </div>
   );
+};
+
+Book.propTypes = {
+  book: ProtoTypes.object.isRequired,
+  changeBookShelf: ProtoTypes.func.isRequired,
+  noDefaultValue: ProtoTypes.bool,
+  t: ProtoTypes.func.isRequired,
 };
