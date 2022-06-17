@@ -59,6 +59,10 @@ export const Home = ({
           {t("Add a book")}
         </button>
       </div>
+
+      <div className="footer">
+        &copy; Mohammed Samara El Gohary {new Date().getFullYear()}
+      </div>
     </div>
   );
 };
