@@ -14,6 +14,5 @@ and allows you to search for a book and add it to it's shelf.
   * CSS3
   * Javascript `ES6`
 
-
-
-
+## Extra Features
+ * `Multi Language`
