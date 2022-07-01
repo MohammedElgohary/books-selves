@@ -121,6 +121,7 @@ class BooksApp extends React.Component {
     BooksAPI.update(book, shelf).then((res) => {
       const { books, shelves, searchResults } = this.state;
 
+      // update book shelf in books array
       books.forEach((b) => {
         if (b.id === book.id) {
           b.shelf = shelf;
@@ -128,14 +129,14 @@ class BooksApp extends React.Component {
       });
 
       shelves.forEach((s) => {
-        // add book to shelf
-        if (s.id === book.shelf) {
+        // add book to its new shelf
+        if (s.id === shelf) {
           s.books.push(book);
         }
 
         s.books.forEach((b) => {
           // remove book from its old shelf
-          if (b.id === book.id && s.id !== b.shelf) {
+          if (b.id === book.id && s.id !== shelf) {
             s.books = s.books.filter((b) => b.id !== book.id);
           }
 
